@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
-###############################
+# ##############################
 # # create Module Table/ Modul Tabelle
 # class Module(models.Modul):
 #     name = models.CharField(max_length=255)
