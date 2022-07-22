@@ -1,5 +1,5 @@
 """
-Serializiers for the user API view
+Serializers for the user API View.
 """
 from django.contrib.auth import get_user_model
 
@@ -8,7 +8,7 @@ from rest_framework import serializers
 ####################################??????????
 # alle serializer erlauben eine Validierung und können Daten sichern
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for the user objects"""
+    """Serializer for the user object."""
 
     class Meta:
         # this is where we tell the django rest framework, the model
@@ -18,13 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
         # we tell it, model equals get use a model.
         # so this serialize is going to be for our user model
         model = get_user_model()
-        # a list of fields that we want to make available through the serialization
-        # these are things that need to be created or set when you make request
-        # that actual fields that will be provided in the request that should be
-        # saved in the model that is created
-        # wir zeigen is_staff, is_superadmin nicht an, damit der user diese Werte nicht
-        # verändern kann
-        fields = ['email','password','name']
+        fields = ['email', 'password', 'name']
         # that is a dictionary that allows us to provide extra metadata to the different fields.
         # This tells Django rest framework things like do we want the field
         # to be write only or read only? or a minimum length on the value?
@@ -33,7 +27,6 @@ class UserSerializer(serializers.ModelSerializer):
         # wenn die min_length : 5 nicht erfüllt ist, dann gibt es einen BAD_REQUEST 400 zurück
         # in dem Fall würde es die create Funktion (siehe unten) nicht aufrufen
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
-
 
     def create(self, validated_data):
         """Create and return a user with encrypted password."""
