@@ -11,7 +11,7 @@ class AdminSiteTests(TestCase):
     """Tests for Django admin."""
 
     def setUp(self):
-        """Create user and client."""
+        """Erstelle admin, user und client."""
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
             email='admin@example.com',
@@ -24,6 +24,7 @@ class AdminSiteTests(TestCase):
             name='Test User'
         )
 
+
     def test_users_lists(self):
         """Test that users are listed on page."""
         url = reverse('admin:core_user_changelist')
@@ -32,6 +33,7 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.user.name)
         self.assertContains(res, self.user.email)
 
+
     def test_edit_user_page(self):
         """Test the edit user page works"""
         url = reverse('admin:core_user_change', args=[self.user.id])
@@ -39,6 +41,7 @@ class AdminSiteTests(TestCase):
 
         # das hier prüft, ob die Seite erfolgreich angezeigt wird
         self.assertEqual(res.status_code, 200)
+
 
     def test_create_user_page(self):
         """Test the create user page works"""

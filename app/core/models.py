@@ -13,6 +13,7 @@ from django.contrib.auth.models import(
 class UserManager(BaseUserManager):
     """Manager for the user"""
 
+    # test_module ruft mit user = get_user_model().objects.create_user diese Funktion auf
     def create_user(self, email, password=None, **extrafields):
         """Create, save and return a new user"""
         if not email:

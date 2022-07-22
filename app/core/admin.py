@@ -14,6 +14,7 @@ class UserAdmin(BaseUserAdmin):
     ordering = ['id']
     list_display = ['email', 'name']
 
+    # change-User View
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (
@@ -29,7 +30,7 @@ class UserAdmin(BaseUserAdmin):
         (_('Weitere Informationen'), {'fields': ('last_login',)}),
     )
     readonly_fields = ['last_login']
-    # zeigt das add-Feld an
+    # add-User View
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
