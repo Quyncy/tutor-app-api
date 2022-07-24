@@ -1,6 +1,8 @@
 """
 Tests for the user API.
 """
+import email
+from click import password_option
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -11,6 +13,7 @@ from rest_framework import status
 
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
+ME_URL = reverse('user:me')
 
 def create_user(**params):
     """Create and return a new user."""
@@ -107,3 +110,57 @@ class PublicUserApiTests(TestCase):
 
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_user_unanthorized(self):
+        """Test authentification is required for users."""
+        res = self.client.get(ME_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZE)
+
+
+class PrivatUserApiTest(TestCase):
+    """Test Api request that require authentication"""
+
+    def setUp(self):
+        self.user = create_user(
+            email='test@example',
+            password='testpass123',
+            name='test name',
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+        # we force the client to authenticate this user
+
+    def test_retrieve_profile_success(self):
+        """Test retrieving profile for logged in user"""
+        res = self.client.get(ME_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_ok)
+        # check ob sich im Datenobjekt auch die self.user.name und self.user.email befinden
+        self.assertEqual(res.data, {
+            'name': self.user.name,
+            'email': self.user.email,
+        })
+
+    def test_post_me_not_allowed(self):
+        """Test POST is not allowed for the me endpoint"""
+        res = self.client.post(ME_URL, {})
+
+        self.assertQual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        """
+        Post ist nur als admin erlaubt, deshalb muss man im
+        Test herausfinden, ob ein 405 method not allowed == True ist
+        """
+
+    def test_update_user_profile(self):
+        """Test updateing the user profile for the authenticated user"""
+        payload = {
+            'name': 'update name',
+            'password': 'newpassword123',
+        }
+        res = self.client.patch(ME_URL, payload)
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.name, payload['name'])
+        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertEqual(res.status_code, status.HTTP_200_ok)
