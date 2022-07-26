@@ -12,7 +12,7 @@ from core import models
 class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
     ordering = ['id']
-    list_display = ['email', 'name']
+    list_display = ['email', 'name',]
 
     # change-User View
     fieldsets = (
@@ -30,7 +30,7 @@ class UserAdmin(BaseUserAdmin):
         (_('Weitere Informationen'), {'fields': ('last_login',)}),
     )
     readonly_fields = ['last_login']
-    # add-User View
+    # add User-View
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
